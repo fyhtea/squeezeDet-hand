@@ -29,10 +29,10 @@ FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_string(
     'mode', 'image', """'image' or 'video'.""")
 tf.app.flags.DEFINE_string(
-    'checkpoint', './data/model_checkpoints/squeezeDet/model.ckpt-87000',
+    'checkpoint', '/home/fyh/logs/SqueezeDet/train/model.ckpt-8500',
     """Path to the model parameter file.""")
 tf.app.flags.DEFINE_string(
-    'input_path', './data/sample.png',
+    'input_path', './data/sample.jpg',
     """Input image or video to be detected. Can process glob input such as """
     """./data/00000*.png.""")
 tf.app.flags.DEFINE_string(
@@ -152,7 +152,7 @@ def image_demo():
 
   with tf.Graph().as_default():
     # Load model
-    mc = kitti_squeezeDet_config()
+    mc = voc_squeezeDet_config()
     mc.BATCH_SIZE = 1
     # model parameters will be restored from checkpoint
     mc.LOAD_PRETRAINED_MODEL = False
@@ -186,9 +186,9 @@ def image_demo():
 
         # TODO(bichen): move this color dict to configuration file
         cls2clr = {
-            'car': (255, 191, 0),
-            'cyclist': (0, 191, 255),
-            'pedestrian':(255, 0, 191)
+            'fist': (255, 191, 0),
+            'indexfinger': (0, 191, 255),
+            'palm':(255, 0, 191)
         }
 
         # Draw boxes

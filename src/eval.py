@@ -13,11 +13,11 @@ import sys
 import time
 
 import numpy as np
-from six.moves import xrange
+
 import tensorflow as tf
 
 from config import *
-from dataset import pascal_voc, kitti
+from dataset import fpascal_voc
 from utils.util import bbox_transform, Timer
 from nets import *
 
@@ -129,7 +129,7 @@ def eval_once(saver, ckpt_path, summary_writer, imdb, model):
     eval_summary_ops.append(
         tf.summary.scalar('num_detections_per_image', num_detection/num_images)
     )
-
+'''
     print ('Analyzing detections...')
     stats, ims = imdb.do_detection_analysis_in_eval(
         FLAGS.eval_dir, global_step)
@@ -142,10 +142,11 @@ def eval_once(saver, ckpt_path, summary_writer, imdb, model):
     eval_summary_str = sess.run(eval_summary_ops)
     for sum_str in eval_summary_str:
       summary_writer.add_summary(sum_str, global_step)
+'''
 
 def evaluate():
   """Evaluate."""
-  assert FLAGS.dataset == 'KITTI', \
+  assert FLAGS.dataset == 'KITTI' or FLAGS.dataset == 'fpascal', \
       'Currently only supports KITTI dataset'
 
   with tf.Graph().as_default() as g:
@@ -153,28 +154,14 @@ def evaluate():
     assert FLAGS.net == 'vgg16' or FLAGS.net == 'resnet50' \
         or FLAGS.net == 'squeezeDet' or FLAGS.net == 'squeezeDet+', \
         'Selected neural net architecture not supported: {}'.format(FLAGS.net)
-    if FLAGS.net == 'vgg16':
-      mc = kitti_vgg16_config()
-      mc.BATCH_SIZE = 1 # TODO(bichen): allow batch size > 1
-      mc.LOAD_PRETRAINED_MODEL = False
-      model = VGG16ConvDet(mc, FLAGS.gpu)
-    elif FLAGS.net == 'resnet50':
-      mc = kitti_res50_config()
-      mc.BATCH_SIZE = 1 # TODO(bichen): allow batch size > 1
-      mc.LOAD_PRETRAINED_MODEL = False
-      model = ResNet50ConvDet(mc, FLAGS.gpu)
-    elif FLAGS.net == 'squeezeDet':
-      mc = kitti_squeezeDet_config()
+    if FLAGS.net == 'squeezeDet':
+      mc = voc_squeezeDet_config()
       mc.BATCH_SIZE = 1 # TODO(bichen): allow batch size > 1
       mc.LOAD_PRETRAINED_MODEL = False
       model = SqueezeDet(mc, FLAGS.gpu)
-    elif FLAGS.net == 'squeezeDet+':
-      mc = kitti_squeezeDetPlus_config()
-      mc.BATCH_SIZE = 1 # TODO(bichen): allow batch size > 1
-      mc.LOAD_PRETRAINED_MODEL = False
-      model = SqueezeDetPlus(mc, FLAGS.gpu)
 
-    imdb = kitti(FLAGS.image_set, FLAGS.data_path, mc)
+    #imdb = kitti(FLAGS.image_set, FLAGS.data_path, mc)
+    imdb = fpascal_voc(FLAGS.image_set, '/home/fyh/Workspace/data/database2', mc)
 
     saver = tf.train.Saver(model.model_params)
 

@@ -1,21 +1,19 @@
-# Author: Bichen Wu (bichen@berkeley.edu) 08/25/2016
-
 """Model configuration for pascal dataset"""
 
 import numpy as np
 
 from config import base_model_config
 
-def kitti_squeezeDetPlus_config():
+def voc_squeezeDet_config():
   """Specify the parameters to tune below."""
-  mc                       = base_model_config('KITTI')
+  mc                       = base_model_config('PASCAL_VOC')
 
-  mc.IMAGE_WIDTH           = 1242
-  mc.IMAGE_HEIGHT          = 375
-  mc.BATCH_SIZE            = 20
+  mc.IMAGE_WIDTH           = 320
+  mc.IMAGE_HEIGHT          = 240
+  mc.BATCH_SIZE            = 5
 
   mc.WEIGHT_DECAY          = 0.0001
-  mc.LEARNING_RATE         = 0.01
+  mc.LEARNING_RATE         = 0.001
   mc.DECAY_STEPS           = 10000
   mc.MAX_GRAD_NORM         = 1.0
   mc.MOMENTUM              = 0.9
@@ -24,7 +22,7 @@ def kitti_squeezeDetPlus_config():
   mc.LOSS_COEF_BBOX        = 5.0
   mc.LOSS_COEF_CONF_POS    = 75.0
   mc.LOSS_COEF_CONF_NEG    = 100.0
-  mc.LOSS_COEF_CLASS       = 1.0
+  mc.LOSS_COEF_CLASS       = 2.0
 
   mc.PLOT_PROB_THRESH      = 0.4
   mc.NMS_THRESH            = 0.4
@@ -43,7 +41,7 @@ def kitti_squeezeDetPlus_config():
   return mc
 
 def set_anchors(mc):
-  H, W, B = 22, 76, 9
+  H, W, B = 14, 19, 9
   anchor_shapes = np.reshape(
       [np.array(
           [[  36.,  37.], [ 366., 174.], [ 115.,  59.],
@@ -54,7 +52,7 @@ def set_anchors(mc):
   center_x = np.reshape(
       np.transpose(
           np.reshape(
-              np.array([np.arange(1, W+1)*float(mc.IMAGE_WIDTH)/(W+1)]*H*B), 
+              np.array([np.arange(1, W+1)*float(mc.IMAGE_WIDTH)/(W+1)]*H*B),
               (B, H, W)
           ),
           (1, 2, 0)

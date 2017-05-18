@@ -17,7 +17,7 @@ from six.moves import xrange
 import tensorflow as tf
 
 from config import *
-from dataset import pascal_voc, kitti
+from dataset import fpascal_voc
 from utils.util import sparse_to_dense, bgr_to_rgb, bbox_transform
 from nets import *
 
@@ -100,7 +100,7 @@ def _viz_prediction_result(model, images, bboxes, labels, batch_det_bbox,
 
 def train():
   """Train SqueezeDet model"""
-  assert FLAGS.dataset == 'KITTI', \
+  assert FLAGS.dataset == 'KITTI' or FLAGS.dataset == 'fpascal', \
       'Currently only support KITTI dataset'
 
   with tf.Graph().as_default():
@@ -117,15 +117,18 @@ def train():
       mc.PRETRAINED_MODEL_PATH = FLAGS.pretrained_model_path
       model = ResNet50ConvDet(mc, FLAGS.gpu)
     elif FLAGS.net == 'squeezeDet':
-      mc = kitti_squeezeDet_config()
-      mc.PRETRAINED_MODEL_PATH = FLAGS.pretrained_model_path
+      #mc = kitti_squeezeDet_config()
+      mc = voc_squeezeDet_config()
+      mc.LOAD_PRETRAINED_MODEL = False
+      #mc.PRETRAINED_MODEL_PATH = FLAGS.pretrained_model_path
       model = SqueezeDet(mc, FLAGS.gpu)
     elif FLAGS.net == 'squeezeDet+':
       mc = kitti_squeezeDetPlus_config()
       mc.PRETRAINED_MODEL_PATH = FLAGS.pretrained_model_path
       model = SqueezeDetPlus(mc, FLAGS.gpu)
 
-    imdb = kitti(FLAGS.image_set, FLAGS.data_path, mc)
+    #imdb = kitti(FLAGS.image_set, FLAGS.data_path, mc)
+    imdb = fpascal_voc('train', '/home/fyh/Workspace/data/database2', mc)
 
     # save model size, flops, activations by layers
     with open(os.path.join(FLAGS.train_dir, 'model_metrics.txt'), 'w') as f:
@@ -153,16 +156,22 @@ def train():
     print ('Model statistics saved to {}.'.format(
       os.path.join(FLAGS.train_dir, 'model_metrics.txt')))
 
-    saver = tf.train.Saver(tf.global_variables())
+    #saver = tf.train.Saver(tf.global_variables())
+    saver = tf.train.Saver()
     summary_op = tf.summary.merge_all()
-    init = tf.global_variables_initializer()
-
-    ckpt = tf.train.get_checkpoint_state(FLAGS.train_dir)
-    if ckpt and ckpt.model_checkpoint_path:
-        saver.restore(sess, ckpt.model_checkpoint_path)
+    #init = tf.global_variables_initializer()
 
     sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
-    sess.run(init)
+
+    #ckpt = tf.train.get_checkpoint_state(FLAGS.train_dir)
+    #if ckpt and ckpt.model_checkpoint_path:
+    #   saver.restore(sess, ckpt.model_checkpoint_path)
+    checkpoint_file = open("/home/fyh/logs/SqueezeDet/train/checkpoint")
+    modelname = checkpoint_file.readline().split('"')[1]
+
+    saver.restore(sess, modelname)
+
+    #sess.run(init)
     tf.train.start_queue_runners(sess=sess)
 
     summary_writer = tf.summary.FileWriter(FLAGS.train_dir, sess.graph)
@@ -275,9 +284,9 @@ def train():
         saver.save(sess, checkpoint_path, global_step=step)
 
 def main(argv=None):  # pylint: disable=unused-argument
-  if tf.gfile.Exists(FLAGS.train_dir):
-    tf.gfile.DeleteRecursively(FLAGS.train_dir)
-  tf.gfile.MakeDirs(FLAGS.train_dir)
+  #if tf.gfile.Exists(FLAGS.train_dir):
+  #  tf.gfile.DeleteRecursively(FLAGS.train_dir)
+  #tf.gfile.MakeDirs(FLAGS.train_dir)
   train()
 
 

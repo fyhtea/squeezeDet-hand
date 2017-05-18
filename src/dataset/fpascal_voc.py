@@ -2,27 +2,28 @@
 
 """Image data base class for pascal voc"""
 
-import cv2
-import os 
-import numpy as np
+import os
 import xml.etree.ElementTree as ET
 
-from utils.util import bbox_transform_inv
+import numpy as np
+
 from dataset.imdb import imdb
 from dataset.voc_eval import voc_eval
+from utils.util import bbox_transform_inv
 
-class pascal_voc(imdb):
-  def __init__(self, image_set, year, data_path, mc):
-    imdb.__init__(self, 'voc_'+year+'_'+image_set, mc)
-    self._year = year
+
+class fpascal_voc(imdb):
+  def __init__(self, image_set, data_path, mc):
+    imdb.__init__(self, 'voc_gesture', mc)
     self._image_set = image_set
+    self._year = '2007'
     self._data_root_path = data_path
-    self._data_path = os.path.join(self._data_root_path, 'VOC' + self._year)
+    self._data_path = os.path.join(self._data_root_path, 'VOC2007')
     self._classes = self.mc.CLASS_NAMES
     self._class_to_idx = dict(zip(self.classes, xrange(self.num_classes)))
 
     # a list of string indices of images in the directory
-    self._image_idx = self._load_image_set_idx() 
+    self._image_idx = self._load_image_set_idx()
     # a dict of image_idx -> [[cx, cy, w, h, cls_idx]]. x,y,w,h are not divided by
     # the image width and height
     self._rois = self._load_pascal_annotation()
@@ -83,7 +84,7 @@ class pascal_voc(imdb):
     Args:
       eval_dir: directory to write evaluation logs
       global_step: step of the checkpoint
-      all_boxes: all_boxes[cls][image] = N x 5 arrays of 
+      all_boxes: all_boxes[cls][image] = N x 5 arrays of
         [xmin, ymin, xmax, ymax, score]
     Returns:
       aps: array of average precisions.
@@ -103,7 +104,7 @@ class pascal_voc(imdb):
           # VOC expects 1-based indices
           for k in xrange(len(dets)):
             f.write('{:s} {:.3f} {:.1f} {:.1f} {:.1f} {:.1f}\n'.
-                format(index, dets[k][-1], 
+                format(index, dets[k][-1],
                        dets[k][0]+1, dets[k][1]+1,
                        dets[k][2]+1, dets[k][3]+1)
             )
@@ -111,13 +112,13 @@ class pascal_voc(imdb):
     # Evaluate detection results
     annopath = os.path.join(
         self._data_root_path,
-        'VOC'+self._year,
+        'VOC2007',
         'Annotations',
         '{:s}.xml'
     )
     imagesetfile = os.path.join(
         self._data_root_path,
-        'VOC'+self._year,
+        'VOC2007',
         'ImageSets',
         'Main',
         self._image_set+'.txt'

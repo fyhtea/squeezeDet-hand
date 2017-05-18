@@ -4,11 +4,11 @@
 # command for squeezeDet:
 # =========================================================================== #
 python ./src/eval.py \
-  --dataset=KITTI \
-  --data_path=./data/KITTI \
+  --dataset=fpascal \
+  --data_path=/home/fyh/Workspace/data/database2 \
   --image_set=val \
-  --eval_dir=/tmp/bichen/logs/SqueezeDet/eval_val \
-  --checkpoint_path=/tmp/bichen/logs/SqueezeDet/train \
+  --eval_dir=/home/fyh/logs/SqueezeDet/eval_val \
+  --checkpoint_path=/home/fyh/logs/SqueezeDet/train \
   --net=squeezeDet \
   --gpu=0
 

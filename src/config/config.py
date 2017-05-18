@@ -18,10 +18,13 @@ def base_model_config(dataset='PASCAL_VOC'):
 
   if cfg.DATASET == 'PASCAL_VOC':
     # object categories to classify
+    '''
     cfg.CLASS_NAMES = ('aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus',
                        'car', 'cat', 'chair', 'cow', 'diningtable', 'dog',
                        'horse', 'motorbike', 'person', 'pottedplant', 'sheep',
                        'sofa', 'train', 'tvmonitor')
+    '''
+    cfg.CLASS_NAMES = ('fist', 'indexfinger', 'palm')
   elif cfg.DATASET == 'KITTI':
     cfg.CLASS_NAMES = ('car', 'pedestrian', 'cyclist')
 
@@ -56,7 +59,7 @@ def base_model_config(dataset='PASCAL_VOC'):
   cfg.ANCHOR_PER_GRID = -1
 
   # batch size
-  cfg.BATCH_SIZE = 20
+  cfg.BATCH_SIZE = 5
 
   # Only keep boxes with probability higher than this threshold
   cfg.PROB_THRESH = 0.005
@@ -87,7 +90,7 @@ def base_model_config(dataset='PASCAL_VOC'):
   cfg.LR_DECAY_FACTOR = 0.1
 
   # learning rate
-  cfg.LEARNING_RATE = 0.005
+  cfg.LEARNING_RATE = 0.0005
 
   # momentum
   cfg.MOMENTUM = 0.9
