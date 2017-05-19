@@ -147,7 +147,7 @@ def eval_once(saver, ckpt_path, summary_writer, imdb, model):
 def evaluate():
   """Evaluate."""
   assert FLAGS.dataset == 'KITTI' or FLAGS.dataset == 'fpascal', \
-      'Currently only supports KITTI dataset'
+      'Currently only supports KITTI pascol dataset'
 
   with tf.Graph().as_default() as g:
 
@@ -161,7 +161,7 @@ def evaluate():
       model = SqueezeDet(mc, FLAGS.gpu)
 
     #imdb = kitti(FLAGS.image_set, FLAGS.data_path, mc)
-    imdb = fpascal_voc(FLAGS.image_set, '/home/fyh/Workspace/data/database2', mc)
+    imdb = fpascal_voc(FLAGS.image_set, FLAGS.data_path, mc)
 
     saver = tf.train.Saver(model.model_params)
 

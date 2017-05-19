@@ -23,8 +23,8 @@ from nets import *
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_string('dataset', 'KITTI',
-                           """Currently only support KITTI dataset.""")
+tf.app.flags.DEFINE_string('dataset', 'fpascal',
+                           """Currently only support pascol dataset.""")
 tf.app.flags.DEFINE_string('data_path', '', """Root directory of data""")
 tf.app.flags.DEFINE_string('image_set', 'train',
                            """ Can be train, trainval, val, or test""")
@@ -108,6 +108,7 @@ def train():
     assert FLAGS.net == 'vgg16' or FLAGS.net == 'resnet50' \
         or FLAGS.net == 'squeezeDet' or FLAGS.net == 'squeezeDet+', \
         'Selected neural net architecture not supported: {}'.format(FLAGS.net)
+    '''
     if FLAGS.net == 'vgg16':
       mc = kitti_vgg16_config()
       mc.PRETRAINED_MODEL_PATH = FLAGS.pretrained_model_path
@@ -126,9 +127,14 @@ def train():
       mc = kitti_squeezeDetPlus_config()
       mc.PRETRAINED_MODEL_PATH = FLAGS.pretrained_model_path
       model = SqueezeDetPlus(mc, FLAGS.gpu)
+    '''
+    if FLAGS.net == 'squeezeDet':
+        mc = voc_squeezeDet_config()
+        mc.LOAD_PRETRAINED_MODEL = False
+        # mc.PRETRAINED_MODEL_PATH = FLAGS.pretrained_model_path
+        model = SqueezeDet(mc, FLAGS.gpu)
 
-    #imdb = kitti(FLAGS.image_set, FLAGS.data_path, mc)
-    imdb = fpascal_voc('train', '/home/fyh/Workspace/data/database2', mc)
+    imdb = fpascal_voc(FLAGS.image_set, FLAGS.data_path, mc)
 
     # save model size, flops, activations by layers
     with open(os.path.join(FLAGS.train_dir, 'model_metrics.txt'), 'w') as f:

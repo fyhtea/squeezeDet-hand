@@ -662,7 +662,7 @@ class ModelSkeleton:
       # count layer stats
       self.model_size_counter.append((layer_name, (dim+1)*hiddens))
 
-      num_flops = 2 * dim * hidden + hidden
+      num_flops = 2 * dim * hiddens + hiddens
       if relu:
         num_flops += 2*hiddens
       self.flop_counter.append((layer_name, num_flops))
