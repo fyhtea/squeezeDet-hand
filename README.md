@@ -48,4 +48,4 @@ Original paper: [SqueezeDet: Unified, Small, Low Power Fully Convolutional Neura
 ## Demo
   ![alt text](https://github.com/fyhtea/squeezeDet-hand/blob/master/img/sample.jpg)
 
-  ![alt text](https://github.com/fyhtea/squeezeDet-hand/blob/master/img/sample.jpg)
+  ![alt text](https://github.com/fyhtea/squeezeDet-hand/blob/master/img/out_sample.jpg)
