@@ -46,5 +46,6 @@ Original paper: [SqueezeDet: Unified, Small, Low Power Fully Convolutional Neura
   tensorboard --logdir=$LOG_DIR
   ```
 ## Demo
-  ![alt text](https://github.com/fyhtea/squeezeDet-hand/tree/master/img/sample.jpg)
-  ![alt text](https://github.com/fyhtea/squeezeDet-hand/tree/master/img/out_sample.jpg)
+  ![alt text](https://github.com/fyhtea/squeezeDet-hand/blob/master/img/sample.jpg)
+
+  ![alt text](https://github.com/fyhtea/squeezeDet-hand/blob/master/img/sample.jpg)
