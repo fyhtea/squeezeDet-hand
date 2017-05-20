@@ -27,12 +27,12 @@ from nets import *
 FLAGS = tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_string(
-    'mode', 'image', """'image' or 'video'.""")
+    'mode', 'video', """'image' or 'video'.""")
 tf.app.flags.DEFINE_string(
-    'checkpoint', '/home/fyh/logs/SqueezeDet/train/model.ckpt-8500',
+    'checkpoint', '/home/fan/Workspace/data/model.ckpt-8500',
     """Path to the model parameter file.""")
 tf.app.flags.DEFINE_string(
-    'input_path', './data/sample.jpg',
+    'input_path', '/home/fan/Workspace/data/sample.jpg',
     """Input image or video to be detected. Can process glob input such as """
     """./data/00000*.png.""")
 tf.app.flags.DEFINE_string(
@@ -42,7 +42,7 @@ tf.app.flags.DEFINE_string(
 def video_demo():
   """Detect videos."""
 
-  cap = cv2.VideoCapture(FLAGS.input_path)
+  cap = cv2.VideoCapture(0)
 
   # Define the codec and create VideoWriter object
   # fourcc = cv2.cv.CV_FOURCC(*'XVID')
@@ -55,7 +55,7 @@ def video_demo():
 
   with tf.Graph().as_default():
     # Load model
-    mc = kitti_squeezeDet_config()
+    mc = voc_squeezeDet_config()
     mc.BATCH_SIZE = 1
     # model parameters will be restored from checkpoint
     mc.LOAD_PRETRAINED_MODEL = False
@@ -75,9 +75,10 @@ def video_demo():
 
         # Load images from video and crop
         ret, frame = cap.read()
-        if ret==True:
+        if ret == True:
           # crop frames
-          frame = frame[500:-205, 239:-439, :]
+          #frame = frame[500:-205, 239:-439, :]
+	  frame = cv2.resize(frame, (320,240))  
           im_input = frame.astype(np.float32) - mc.BGR_MEANS
         else:
           break
@@ -110,9 +111,9 @@ def video_demo():
 
         # TODO(bichen): move this color dict to configuration file
         cls2clr = {
-            'car': (255, 191, 0),
-            'cyclist': (0, 191, 255),
-            'pedestrian':(255, 0, 191)
+            'fist': (255, 191, 0),
+            'indexfinger': (0, 191, 255),
+            'palm':(255, 0, 191)
         }
         _draw_box(
             frame, final_boxes,
@@ -124,8 +125,9 @@ def video_demo():
         t_draw = time.time()
         times['draw']= t_draw - t_filter
 
-        cv2.imwrite(out_im_name, frame)
+        #cv2.imwrite(out_im_name, frame)
         # out.write(frame)
+        cv2.imshow('?',frame)
 
         times['total']= time.time() - t_start
 
