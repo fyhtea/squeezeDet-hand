@@ -35,7 +35,7 @@ if [[ "$1" == "squeezeDet" ]]
 then
   python ./src/train.py \
   --dataset=fpascal \
-  --pretrained_model_path=/home/fyh/squeezenet.pkl \
+  --pretrained_model_path=/home/fyh/Workspace/squeezeDet/data/squeezenet.pkl \
   --data_path=/home/fyh/Workspace/data/database2 \
   --image_set=train \
   --train_dir=/home/fyh/logs/SqueezeDet/train \
@@ -51,11 +51,11 @@ fi
 if [[ "$1" == "squeezeDet+" ]]
 then
   python ./src/train.py \
-  --dataset=KITTI \
-  --pretrained_model_path=./data/SqueezeNet/squeezenet_v1.0_SR_0.750.pkl \
-  --data_path=./data/KITTI \
+  --dataset=fpascal \
+  --pretrained_model_path=/home/fyh/squeezenet.pkl \
+  --data_path=/home/fyh/Workspace/data/database2 \
   --image_set=train \
-  --train_dir=/tmp/bichen/logs/SqueezeDetPlus/train \
+  --train_dir=/home/fyh/logs/SqueezeDet/train \
   --net=squeezeDet+ \
   --summary_step=100 \
   --checkpoint_step=500 \

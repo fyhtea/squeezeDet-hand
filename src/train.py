@@ -130,9 +130,13 @@ def train():
     '''
     if FLAGS.net == 'squeezeDet':
         mc = voc_squeezeDet_config()
-        mc.LOAD_PRETRAINED_MODEL = False
-        # mc.PRETRAINED_MODEL_PATH = FLAGS.pretrained_model_path
+        mc.LOAD_PRETRAINED_MODEL = True
+        mc.PRETRAINED_MODEL_PATH = FLAGS.pretrained_model_path
         model = SqueezeDet(mc, FLAGS.gpu)
+    elif FLAGS.net == 'squeezeDet+':
+        mc = voc_squeezeDetplus_config()
+        mc.LOAD_PRETRAINED_MODEL = False
+        model = SqueezeDetPlus(mc, FLAGS.gpu)
 
     imdb = fpascal_voc(FLAGS.image_set, FLAGS.data_path, mc)
 
@@ -172,10 +176,17 @@ def train():
     #ckpt = tf.train.get_checkpoint_state(FLAGS.train_dir)
     #if ckpt and ckpt.model_checkpoint_path:
     #   saver.restore(sess, ckpt.model_checkpoint_path)
-    checkpoint_file = open("/home/fyh/logs/SqueezeDet/train/checkpoint")
-    modelname = checkpoint_file.readline().split('"')[1]
 
-    saver.restore(sess, modelname)
+    # uncomment when using squeezeDet
+    train_continue=False
+    if train_continue:
+        checkpoint_file = open("/home/fyh/Workspace/logs/SqueezeDet/train/checkpoint")
+        modelname = checkpoint_file.readline().split('"')[1]
+        saver.restore(sess, modelname)
+        #saver.restore(sess, '/home/fyh/Workspace/squeezeDet/data/model_checkpoints/squeezeDetPlus/model.ckpt-95000')
+    else:
+        init = tf.global_variables_initializer()
+        sess.run(init)
 
     #sess.run(init)
     tf.train.start_queue_runners(sess=sess)
@@ -290,9 +301,9 @@ def train():
         saver.save(sess, checkpoint_path, global_step=step)
 
 def main(argv=None):  # pylint: disable=unused-argument
-  #if tf.gfile.Exists(FLAGS.train_dir):
-  #  tf.gfile.DeleteRecursively(FLAGS.train_dir)
-  #tf.gfile.MakeDirs(FLAGS.train_dir)
+  if tf.gfile.Exists(FLAGS.train_dir) == False:
+    #tf.gfile.DeleteRecursively(FLAGS.train_dir)
+    tf.gfile.MakeDirs(FLAGS.train_dir)
   train()
 
 
